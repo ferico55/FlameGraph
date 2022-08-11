@@ -3,21 +3,38 @@ import Foundation
 public class HTMLRenderer: BaseRenderer, Renderer {
     public static func render(graph: CallGraphNode) -> String {
         let maxDepth = CGFloat(graph.maxDepth)
-        let cellHeight: CGFloat = 40
+        let cellHeight: CGFloat = 56
         let rect = CGRect(origin: .zero, size: CGSize(width: 10000, height: cellHeight * maxDepth))
         return """
         <html>
+            <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
             <style>
                 html, body { height: \(rect.height)px; }
                 div {
                     color: white;
                     position: absolute;
-                    overflow-x:scroll;
+                    overflow-x: scroll;
+                    overflow-y: hidden
+                }
+                .popover {
+                    z-index: 1;
+                    width: 300px;
+                    height: 70px;
+                }
+                .popover-content {
+                    color: black;
                 }
             </style>
             <body>
                 \(divs(for: [graph], y: 0, x: 0, maxPercentage: graph.symbol.percentage, height: cellHeight, totalHeight: rect.height).joined(separator: "\n"))
             </body>
+            <script>
+            $(document).ready(function(){
+                $('[data-toggle="popover"]').popover();   
+            });
+            </script>
         </html>
         """
     }
@@ -36,7 +53,12 @@ public class HTMLRenderer: BaseRenderer, Renderer {
             let color = colors.randomElement()!.hex
             let position: CGPoint = rect.origin
             let size: CGSize = rect.size
-            let div = "<div style=\"background-color:\(color);top: \(position.y)px;left:\(position.x)px;width: \(size.width)px;height:\(size.height)px;\"><p>\(text(for: node))</p></div>"
+            let div = """
+            <div style=\"background-color:\(color);top: \(position.y)px;left:\(position.x)px;width: \(size.width)px;height:\(size.height)px; font-size:14;\" 
+                data-toggle=\"popover\" data-content=\"\(text(for: node))\">
+                    <p>\(text(for: node))</p>
+            </div>
+            """
             currentX = rect.maxX + xSpacing
             return div + childDivs
         }
