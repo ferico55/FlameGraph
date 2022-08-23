@@ -12,19 +12,33 @@ public class HTMLRenderer: BaseRenderer, Renderer {
             <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
             <style>
                 html, body { height: \(rect.height)px; }
-                div {
-                    color: white;
-                    position: absolute;
-                    overflow-x: scroll;
-                    overflow-y: hidden
-                }
                 .popover {
                     z-index: 1;
-                    width: 300px;
-                    height: 70px;
-                }
-                .popover-content {
+                    max-width: 400px;
                     color: black;
+                }
+                .graph-container {
+                    font-size: 12px;
+                    border-radius: 2px;
+                    padding: 8px;
+                    font-family: monospace;
+                    cursor: pointer;
+                    position: absolute;
+                    overflow-x: scroll;
+                    overflow-y: hidden;
+                }
+                .graph-content {
+                    position: relative;
+                }
+                .graph-content a {
+                    color: white;
+                }
+                .graph-content a: hover {
+                    text-decoration: none;
+                }
+                .graph-content p {
+                    color: white;
+                    margin: 0;
                 }
             </style>
             <body>
@@ -54,9 +68,11 @@ public class HTMLRenderer: BaseRenderer, Renderer {
             let position: CGPoint = rect.origin
             let size: CGSize = rect.size
             let div = """
-            <div style=\"background-color:\(color);top: \(position.y)px;left:\(position.x)px;width: \(size.width)px;height:\(size.height)px; font-size:14;\" 
-                data-toggle=\"popover\" data-content=\"\(text(for: node))\">
+            <div class="graph-container" style=\"background-color:\(color); top: \(position.y)px; left:\(position.x)px; width: \(size.width)px; height:\(size.height)px;\" 
+                data-toggle=\"popover\" data-trigger=\"hover\" data-content=\"\(text(for: node))\">
+                <div class="graph-content">
                     <p>\(text(for: node))</p>
+                </div>
             </div>
             """
             currentX = rect.maxX + xSpacing
